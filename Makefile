@@ -1,6 +1,6 @@
 PROGRAM=slre
 
-all: $(PROGRAM)
+all: test $(PROGRAM)
 
 SOURCES = $(shell find . -maxdepth 1 -name "*.c")
 
@@ -22,13 +22,20 @@ LIBS+=$(PKG_CONFIG_LIBS)
 $(PROGRAM): $(OBJS)
 	g++ $(LDFLAGS) $+ -o $@ $(LIBS)
 
+slre-test: slre.c
+	gcc -o $@  $(INCS) -DSLRE_UNIT_TEST $(DEFS) $+ $(CFLAGS) $(LDFLAGS) $(LIBS)
+
+test: slre-test
+	./slre-test
+
 %.o: %.cpp
-	g++ -o $@ $(INCS) $(DEFS) -c $+ $(CFLAGS) $(EXTRA_CFLAGS)
+	g++ -o $@ $(INCS) $(DEFS) -c $+ $(CFLAGS)
 
 %.o: %.c
-	gcc -o $@  $(INCS) $(DEFS) -c $+ $(CFLAGS) $(EXTRA_CFLAGS)
+	gcc -o $@  $(INCS) $(DEFS) -c $+ $(CFLAGS)
 
 clean:
-	rm -f $(OBJS)
-	rm -f $(PROGRAM)
-	rm -f *.o *.a *~
+	rm -fv $(OBJS)
+	rm -fv $(PROGRAM)
+	rm -fv slre-test
+	rm -fv *.o *.a *~
